@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 export default {
   name: "ToDoList",
   setup() {
@@ -46,6 +46,7 @@ export default {
           const id = todoList.value.length + 1;
           const item = { id, value: newItem.value };
           todoList.value.push(item);
+          localStorage.setItem('todoList', JSON.stringify(todoList.value));
           newItem.value = "";
         }
       }
@@ -54,7 +55,15 @@ export default {
     const deleteItem = (id) => {
       const index = todoList.value.findIndex((item) => item.id === id);
       todoList.value.splice(index, 1);
+      localStorage.setItem('todoList', JSON.stringify(todoList.value));
     };
+
+    onMounted(()=>{
+        const storedData = localStorage.getItem('todoList');
+      if (storedData) {
+        todoList.value = JSON.parse(storedData);
+      }
+    });
 
     return {
       newItem,
