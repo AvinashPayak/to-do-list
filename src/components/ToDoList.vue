@@ -46,6 +46,7 @@ export default {
           const id = todoList.value.length + 1;
           const item = { id, value: newItem.value };
           todoList.value.push(item);
+          newItem.value = "";
         }
       }
     };
