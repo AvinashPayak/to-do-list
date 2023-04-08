@@ -31,11 +31,12 @@
       </li>
     </ul>
     <p v-else class="text-red-500 my-5">No List Items to display!</p>
+    <p>Completed: {{ getCheckedItems }}/{{ todoList.length }}</p>
   </section>
 </template>
 
 <script>
-import { onMounted, ref} from "vue";
+import { computed, onMounted, ref} from "vue";
 export default {
   name: "ToDoList",
   setup() {
@@ -58,6 +59,14 @@ export default {
         }
       }
     };
+
+    const getCheckedItems = computed(()=>{
+      let count = 0;
+      todoList.value.forEach((item) =>{
+        if(item.isChecked) count++;
+      })
+      return count;
+    });
 
     const deleteItem = (id) => {
       const index = todoList.value.findIndex((item) => item.id === id);
@@ -83,6 +92,7 @@ export default {
       addItem,
       deleteItem,
       itemChecked,
+      getCheckedItems,
     };
   },
 };
