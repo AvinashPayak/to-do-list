@@ -18,7 +18,10 @@
         :key="item.id"
         class="flex justify-between items-center w-full"
       >
-        <p>{{index + 1 }}. {{ item.value }}</p>
+        <label class="flex items-center gap-2">
+          <input @click="itemChecked(item.isChecked, index)" v-model="item.isChecked" type="checkbox" class="w-5 h-5">
+          <p :class="item.isChecked? 'line-through':''">{{ item.value }}</p>
+        </label>
         <button class="text-red-500" @click="deleteItem(item.id)">
           <svg class="w-9 h-9" data-name="Layer 3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
             <path style="fill:#FF0000" d="M64 21.433A42.567 42.567 0 1 0 106.567 64 42.615 42.615 0 0 0 64 21.433zm0 80.912A38.345 38.345 0 1 1 102.345 64 38.389 38.389 0 0 1 64 102.345z"/>
@@ -32,7 +35,7 @@
 </template>
 
 <script>
-import { onMounted, ref } from "vue";
+import { onMounted, ref} from "vue";
 export default {
   name: "ToDoList",
   setup() {
@@ -61,6 +64,11 @@ export default {
       localStorage.setItem('todoList', JSON.stringify(todoList.value));
     };
 
+    const itemChecked = (value, index) => {
+      todoList.value[index].isChecked = !value;
+      localStorage.setItem('todoList', JSON.stringify(todoList.value));
+    }
+
     onMounted(()=>{
         const storedData = localStorage.getItem('todoList');
       if (storedData) {
@@ -73,6 +81,7 @@ export default {
       todoList,
       addItem,
       deleteItem,
+      itemChecked,
     };
   },
 };
