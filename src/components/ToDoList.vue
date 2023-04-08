@@ -4,11 +4,10 @@
   >
     <h1 class="my-5 text-3xl font-bold">To Do List</h1>
     <div class="bg-gray-100 w-full [400px] flex p-2 rounded-xl">
-      <input class="bg-gray-100 p-1 w-full" type="text" v-model="newItem" />
+      <input class="bg-gray-100 p-1 w-full" @keydown.enter="addItem" type="text" v-model="newItem" />
       <button
         class="px-5 text-[#8a2be2]"
         @click="addItem"
-        @keydown.enter="addItem"
       >
         Add
       </button>
