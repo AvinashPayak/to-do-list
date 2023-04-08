@@ -41,6 +41,7 @@ export default {
   setup() {
     const newItem = ref("");
     const todoList = ref([]);
+    let index = todoList?.value?.length? todoList?.value[todoList?.value?.length - 1]?.id + 1 : 0;
 
     const addItem = () => {
       if (newItem.value.trim() !== "") {
@@ -49,7 +50,7 @@ export default {
         );
 
         if (itemIndex === -1) {
-          const id = todoList.value.length + 1;
+          const id = index++;
           const item = { id, value: newItem.value };
           todoList.value.push(item);
           localStorage.setItem('todoList', JSON.stringify(todoList.value));
