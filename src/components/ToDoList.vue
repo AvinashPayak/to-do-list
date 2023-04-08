@@ -5,7 +5,13 @@
     <h1 class="my-5 text-3xl font-bold">To Do List</h1>
     <div class="bg-gray-100 w-full [400px] flex p-2 rounded-xl">
       <input class="bg-gray-100 p-1 w-full" type="text" v-model="newItem" />
-      <button class="px-5 text-[#8a2be2]" @click="addItem" @keydown.enter="addItem">Add</button>
+      <button
+        class="px-5 text-[#8a2be2]"
+        @click="addItem"
+        @keydown.enter="addItem"
+      >
+        Add
+      </button>
     </div>
     <ul class="w-full mx-5 my-5 text-lg" v-if="todoList.length">
       <li
@@ -32,10 +38,17 @@ export default {
     const todoList = ref([]);
 
     const addItem = () => {
-      const id = todoList.value.length + 1;
-      const item = { id, value: newItem.value };
-      todoList.value.push(item);
-      console.log("todoList", todoList);
+      if (newItem.value.trim() !== "") {
+        const itemIndex = todoList.value.findIndex(
+          (item) => item.value === newItem.value.trim()
+        );
+
+        if (itemIndex === -1) {
+          const id = todoList.value.length + 1;
+          const item = { id, value: newItem.value };
+          todoList.value.push(item);
+        }
+      }
     };
 
     const deleteItem = (id) => {
