@@ -31,7 +31,8 @@
       </li>
     </ul>
     <p v-else class="text-red-500 my-5">No List Items to display!</p>
-    <p>Completed: {{ getCheckedItems }}/{{ todoList.length }}</p>
+    <p v-if="getCheckedItems !== todoList.length" class="text-red-500">Completed: {{ getCheckedItems }}/{{ todoList.length }}</p>
+    <p v-else-if="todoList.length > 0" class="text-green-500">All Tasks Completed!</p>
   </section>
 </template>
 
@@ -52,7 +53,7 @@ export default {
 
         if (itemIndex === -1) {
           const id = index++;
-          const item = { id, value: newItem.value };
+          const item = { id, value: newItem.value, isChecked: false, };
           todoList.value.push(item);
           localStorage.setItem('todoList', JSON.stringify(todoList.value));
           newItem.value = "";
