@@ -12,6 +12,15 @@
       <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 128 128" style="enable-background:new 0 0 128 128" xml:space="preserve"><path style="fill:#8a2be2" d="M128 63.954c0 2.006-.797 3.821-2.136 5.127-1.308 1.337-3.125 2.133-5.166 2.133H71.302v49.356c0 4.012-3.284 7.292-7.302 7.292-2.009 0-3.827-.828-5.166-2.134-1.308-1.337-2.136-3.152-2.136-5.159V71.214H7.302c-4.05 0-7.302-3.248-7.302-7.26 0-2.006.797-3.853 2.136-5.159a7.279 7.279 0 0 1 5.166-2.134h49.395V7.306c0-4.012 3.284-7.26 7.302-7.26 2.009 0 3.827.828 5.166 2.133a7.238 7.238 0 0 1 2.136 5.127v49.356h49.395A7.276 7.276 0 0 1 128 63.954z"/></svg>
       </button>
     </div>
+    <div class="w-full flex justify-end">
+      <div class="bg-gray-100 px-3 py-2 rounded-lg my-3">
+        <label for="sort">Sort:</label>
+      <select class="bg-gray-100"  name="sort" id="sort" v-model="sort" @change="sortedList">
+        <option value="default">Select</option>
+        <option value="alphabetically">Alphabetically</option>
+      </select>
+      </div>
+    </div>
     <ul class="w-full mx-5 my-5 text-lg" v-if="todoList.length">
       <li
         v-for="(item, index) in todoList"
@@ -43,6 +52,7 @@ export default {
   setup() {
     const newItem = ref("");
     const todoList = ref([]);
+    const sort = ref("default");
     let index = todoList?.value?.length? todoList?.value[todoList?.value?.length - 1]?.id + 1 : 0;
 
     const addItem = () => {
@@ -80,6 +90,17 @@ export default {
       localStorage.setItem('todoList', JSON.stringify(todoList.value));
     }
 
+    const sortedList = () => {
+      console.log("sort", sort.value);
+      if(sort.value === 'alphabetically'){
+        console.log("here");
+        todoList.value.sort((a,b) => a.value.localeCompare(b.value));
+      }
+      else if(sort.value === 'default'){
+        todoList.value.sort((a,b) => a.id - b.id);
+      }
+    };
+
     onMounted(()=>{
         const storedData = localStorage.getItem('todoList');
       if (storedData) {
@@ -94,6 +115,8 @@ export default {
       deleteItem,
       itemChecked,
       getCheckedItems,
+      sort,
+      sortedList,
     };
   },
 };
