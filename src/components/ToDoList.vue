@@ -25,11 +25,14 @@
       <li
         v-for="(item, index) in todoList"
         :key="item.id"
-        class="flex justify-between items-center w-full"
+        class="flex justify-between items-center w-full my-2"
       >
-        <label class="flex items-center gap-2">
+        <label class="flex w-full items-center gap-2 bg-gray-100 rounded-xl px-3 pb-1">
           <input @click="itemChecked(item.isChecked, index)" v-model="item.isChecked" type="checkbox" class="w-5 h-5">
-          <p :class="item.isChecked? 'line-through':''">{{ item.value }}</p>
+          <div>
+            <p class="font-bold text-2xl" :class="item.isChecked? 'line-through':''">{{ item.value }}</p>
+            <p class="text-xs text-gray-500">{{ getDate(item.dateTime) }}</p>
+          </div>
         </label>
         <button class="text-red-500" @click="deleteItem(item.id)">
           <svg class="w-9 h-9" data-name="Layer 3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
@@ -47,6 +50,8 @@
 
 <script>
 import { computed, onMounted, ref} from "vue";
+import moment from 'moment';
+
 export default {
   name: "ToDoList",
   setup() {
@@ -63,13 +68,32 @@ export default {
 
         if (itemIndex === -1) {
           const id = index++;
-          const item = { id, value: newItem.value, isChecked: false, };
+          const item = {
+            id,
+            value: newItem.value,
+            isChecked: false,
+            dateTime: moment(),
+          };
           todoList.value.push(item);
           localStorage.setItem('todoList', JSON.stringify(todoList.value));
           newItem.value = "";
         }
       }
     };
+
+    const getDate = (dateTime) => {
+      const now = moment();
+      const date = moment(dateTime);
+      const isToday = now.isSame(date, 'day');
+      const isYesterday = now.clone().subtract(1, 'day').isSame(date, 'day');
+      if (isToday) {
+        return `Today ${date.format('hh:mm A')}`;
+      } else if (isYesterday) {
+        return `Yesterday ${date.format('hh:mm A')}`;
+      } else {
+        return date.format('DD MMMM, YYYY, hh:mm A');
+      }      
+    }
 
     const getCheckedItems = computed(()=>{
       let count = 0;
@@ -117,6 +141,7 @@ export default {
       getCheckedItems,
       sort,
       sortedList,
+      getDate,
     };
   },
 };
