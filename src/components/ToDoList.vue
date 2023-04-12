@@ -3,7 +3,7 @@
     class="bg-white h-[600px] w-[500px] m-10 rounded-[20px] flex flex-col items-center p-5"
   >
     <h1 class="my-5 text-3xl font-bold">To Do List</h1>
-    <div class="bg-gray-100 w-full [400px] flex p-2 rounded-xl">
+    <div class="bg-gray-100 w-full [400px] flex p-2 rounded-xl shadow-md">
       <input class="bg-gray-100 p-1 w-full" @keydown.enter="addItem" type="text" v-model="newItem" />
       <button
         class="px-5 text-[#8a2be2]"
@@ -18,17 +18,18 @@
       <select class="bg-gray-100"  name="sort" id="sort" v-model="sort" @change="sortedList">
         <option value="default">Select</option>
         <option value="alphabetically">Alphabetically</option>
+        <option value="time">Time</option>
       </select>
       </div>
     </div>
-    <ul class="w-full mx-5 my-5 text-lg" v-if="todoList.length">
+    <ul class="w-full mx-5 my-5 text-lg h-full overflow-y-scroll" v-if="todoList.length">
       <li
         v-for="(item, index) in todoList"
         :key="item.id"
         class="flex justify-between items-center w-full my-2"
       >
-        <label class="flex w-full items-center gap-2 bg-gray-100 rounded-xl px-3 pb-1">
-          <input @click="itemChecked(item.isChecked, index)" v-model="item.isChecked" type="checkbox" class="w-5 h-5">
+        <label class="flex w-full items-center gap-2 m-2 bg-gray-100 rounded-xl px-3 pb-1 shadow-md">
+          <input @click="itemChecked(item.isChecked, index)" v-model="item.isChecked" type="checkbox" class="w-[20px] h-[20px]">
           <div>
             <p class="font-bold text-2xl" :class="item.isChecked? 'line-through':''">{{ item.value }}</p>
             <p class="text-xs text-gray-500">{{ getDate(item.dateTime) }}</p>
@@ -58,7 +59,8 @@ export default {
     const newItem = ref("");
     const todoList = ref([]);
     const sort = ref("default");
-    let index = todoList?.value?.length? todoList?.value[todoList?.value?.length - 1]?.id + 1 : 0;
+    let counter = 0;
+    //let index = todoList?.value?.length? todoList?.value[todoList?.value?.length - 1]?.id + 1 : 0;
 
     const addItem = () => {
       if (newItem.value.trim() !== "") {
@@ -67,16 +69,17 @@ export default {
         );
 
         if (itemIndex === -1) {
-          const id = index++;
           const item = {
-            id,
+            id : counter,
             value: newItem.value,
             isChecked: false,
             dateTime: moment(),
           };
           todoList.value.push(item);
           localStorage.setItem('todoList', JSON.stringify(todoList.value));
+          localStorage.setItem('counter', ++counter);
           newItem.value = "";
+          sortedList();
         }
       }
     };
@@ -115,10 +118,13 @@ export default {
     }
 
     const sortedList = () => {
-      console.log("sort", sort.value);
       if(sort.value === 'alphabetically'){
-        console.log("here");
         todoList.value.sort((a,b) => a.value.localeCompare(b.value));
+      }
+      else if(sort.value === 'time'){
+        todoList.value.sort((a,b) => {
+          return b.dateTime-a.dateTime;
+        }) 
       }
       else if(sort.value === 'default'){
         todoList.value.sort((a,b) => a.id - b.id);
@@ -127,6 +133,7 @@ export default {
 
     onMounted(()=>{
         const storedData = localStorage.getItem('todoList');
+        counter = localStorage.getItem('counter');
       if (storedData) {
         todoList.value = JSON.parse(storedData);
       }
