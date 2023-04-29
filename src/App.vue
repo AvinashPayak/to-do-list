@@ -1,16 +1,33 @@
 <template>
-  <div id="app">
-    <to-do-list/>
+  <div id="app" :class="changeBackground? 'bg-green-500':'bg-[#8a2be2]'">
+    <to-do-list @getCheckedItems="getCheckedItems"/>
   </div>
 </template>
 
 <script>
+import { ref } from "vue";
 import ToDoList from './components/ToDoList.vue'
 export default {
   name: 'App',
   components: {
     ToDoList
-  }
+  },
+  setup(){
+    const changeBackground = ref(false);
+    const getCheckedItems = (checked) => {
+      if(checked){
+        changeBackground.value = true;
+      }
+      else {
+        changeBackground.value = false;
+      }
+    } 
+
+    return {
+      getCheckedItems,
+      changeBackground,
+    }
+  },
 }
 </script>
 
@@ -21,7 +38,6 @@ export default {
 
 #app {
   height: 100vh;
-  background-color: #8a2be2;
   display: flex;
   justify-content: center;
 }

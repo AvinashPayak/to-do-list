@@ -16,12 +16,12 @@
     </div>
     <div class="w-full flex justify-end">
       <div class="bg-gray-100 px-3 py-2 rounded-lg my-3">
-        <label for="sort">Sort:</label>
-      <select class="bg-gray-100"  name="sort" id="sort" v-model="sort" @change="sortedList">
-        <option value="default">Select</option>
-        <option value="alphabetically">Alphabetically</option>
-        <option value="time">Time</option>
-      </select>
+          <label for="sort">Sort:</label>
+          <select class="bg-gray-100" name="sort" id="sort" v-model="sort" @change="sortedList">
+            <option value="default">Select</option>
+            <option value="alphabetically">Alphabetically</option>
+          <option value="time">Time</option>
+        </select>
       </div>
     </div>
     <ul class="w-full mx-5 my-5 text-lg h-full overflow-y-scroll" v-if="todoList.length">
@@ -84,12 +84,12 @@
 </template>
 
 <script>
-import { computed, onMounted, ref, watch} from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import moment from 'moment';
 
 export default {
   name: "ToDoList",
-  setup() {
+  setup(props, context) {
     const newItem = ref("");
     const todoList = ref([]);
     const sort = ref("default");
@@ -105,7 +105,7 @@ export default {
 
         if (itemIndex === -1) {
           const item = {
-            id : counter,
+            id: counter,
             value: newItem.value,
             isChecked: false,
             dateTime: moment(),
@@ -120,7 +120,7 @@ export default {
       }
     };
 
-    watch(newItem, (newValue)=>{
+    watch(newItem, (newValue) => {
       displayRemainingCharacters.value = 40 - newValue.length;
     })
 
@@ -135,14 +135,21 @@ export default {
         return `Yesterday ${date.format('hh:mm A')}`;
       } else {
         return date.format('DD MMMM, YYYY, hh:mm A');
-      }      
+      }
     }
 
-    const getCheckedItems = computed(()=>{
+    const getCheckedItems = computed(() => {
       let count = 0;
-      todoList.value.forEach((item) =>{
-        if(item.isChecked) count++;
-      })
+      todoList.value.forEach((item) => {
+        if (item.isChecked) count++;
+      });
+
+      if(todoList.value.length > 0 && todoList.value.length === count) {
+        context.emit('getCheckedItems', true)
+      }
+      else {
+        context.emit('getCheckedItems', false);
+      }
       return count;
     });
 
@@ -158,22 +165,22 @@ export default {
     }
 
     const sortedList = () => {
-      if(sort.value === 'alphabetically'){
-        todoList.value.sort((a,b) => a.value.localeCompare(b.value));
+      if (sort.value === 'alphabetically') {
+        todoList.value.sort((a, b) => a.value.localeCompare(b.value));
       }
-      else if(sort.value === 'time'){
-        todoList.value.sort((a,b) => {
-          return b.dateTime-a.dateTime;
-        }) 
+      else if (sort.value === 'time') {
+        todoList.value.sort((a, b) => {
+          return b.dateTime - a.dateTime;
+        })
       }
-      else if(sort.value === 'default'){
-        todoList.value.sort((a,b) => a.id - b.id);
+      else if (sort.value === 'default') {
+        todoList.value.sort((a, b) => a.id - b.id);
       }
     };
 
-    onMounted(()=>{
-        const storedData = localStorage.getItem('todoList');
-        counter = localStorage.getItem('counter');
+    onMounted(() => {
+      const storedData = localStorage.getItem('todoList');
+      counter = localStorage.getItem('counter');
       if (storedData) {
         todoList.value = JSON.parse(storedData);
       }
@@ -202,5 +209,4 @@ export default {
 
 input:focus {
   outline: none;
-}
-</style>
+}</style>
