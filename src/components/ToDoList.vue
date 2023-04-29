@@ -4,13 +4,16 @@
   >
     <h1 class="my-5 text-3xl font-bold">To Do List</h1>
     <div class="bg-gray-100 w-full [400px] flex p-2 rounded-xl shadow-md">
-      <input class="bg-gray-100 p-1 w-full" @keydown.enter="addItem" type="text" v-model="newItem" />
+      <input class="bg-gray-100 p-1 w-full" @keydown.enter="addItem" type="text" v-model="newItem" maxlength="40"/>
       <button
         class="px-5 text-[#8a2be2]"
         @click="addItem"
       >
       <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 128 128" style="enable-background:new 0 0 128 128" xml:space="preserve"><path style="fill:#8a2be2" d="M128 63.954c0 2.006-.797 3.821-2.136 5.127-1.308 1.337-3.125 2.133-5.166 2.133H71.302v49.356c0 4.012-3.284 7.292-7.302 7.292-2.009 0-3.827-.828-5.166-2.134-1.308-1.337-2.136-3.152-2.136-5.159V71.214H7.302c-4.05 0-7.302-3.248-7.302-7.26 0-2.006.797-3.853 2.136-5.159a7.279 7.279 0 0 1 5.166-2.134h49.395V7.306c0-4.012 3.284-7.26 7.302-7.26 2.009 0 3.827.828 5.166 2.133a7.238 7.238 0 0 1 2.136 5.127v49.356h49.395A7.276 7.276 0 0 1 128 63.954z"/></svg>
       </button>
+    </div>
+    <div class="w-full mt-2">
+      <span class="text-red-500 text-left">Total characters remaining {{ displayRemainingCharacters }}</span>
     </div>
     <div class="w-full flex justify-end">
       <div class="bg-gray-100 px-3 py-2 rounded-lg my-3">
@@ -50,7 +53,7 @@
 </template>
 
 <script>
-import { computed, onMounted, ref} from "vue";
+import { computed, onMounted, ref, watch} from "vue";
 import moment from 'moment';
 
 export default {
@@ -59,6 +62,7 @@ export default {
     const newItem = ref("");
     const todoList = ref([]);
     const sort = ref("default");
+    const displayRemainingCharacters = ref(40);
     let counter = 0;
     //let index = todoList?.value?.length? todoList?.value[todoList?.value?.length - 1]?.id + 1 : 0;
 
@@ -81,8 +85,13 @@ export default {
           newItem.value = "";
           sortedList();
         }
+        displayRemainingCharacters.value = 40;
       }
     };
+
+    watch(newItem, (newValue)=>{
+      displayRemainingCharacters.value = 40 - newValue.length;
+    })
 
     const getDate = (dateTime) => {
       const now = moment();
@@ -149,6 +158,7 @@ export default {
       sort,
       sortedList,
       getDate,
+      displayRemainingCharacters,
     };
   },
 };
