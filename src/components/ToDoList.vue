@@ -34,7 +34,7 @@
         <label class="flex w-full items-center gap-2 m-2 bg-gray-100 rounded-xl px-3 pb-1 shadow-md">
           <input @click="itemChecked(item.isChecked, index)" v-model="item.isChecked" type="checkbox" class="w-[20px] h-[20px]">
           <div>
-            <p class="font-bold text-2xl" :class="item.isChecked? 'line-through':''">{{ item.value }}</p>
+            <p class="font-bold text-2xl break-all overflow-wrap" :class="item.isChecked? 'line-through':''">{{ item.value }}</p>
             <p class="text-xs text-gray-500">{{ getDate(item.dateTime) }}</p>
           </div>
         </label>
